@@ -37,10 +37,10 @@ class TestGroup:
         assert C4.are_rearranged_from_the_group_elements(['a', 'b', 'c', 'e'])
         assert not C4.are_rearranged_from_the_group_elements(['a', 'a', 'c', 'e'])
     
-    def test_get_index_of_gi(self, get_groups):
+    def test_get_index(self, get_groups):
         for _, G in get_groups.items():
             for i in range(G.order):
-                assert G.get_index_of_gi(G.g[i]) == i
+                assert G.i[G.g[i]] == i
 
     def test_create_gi_multiply_gj(self, get_groups):
         C4 = get_groups['C4']

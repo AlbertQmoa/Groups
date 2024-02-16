@@ -4,8 +4,9 @@ class Group:
     def __init__(self, cayley_table):
         # cayley_table is a list of list, where cayley_table[0] was assumed to be {e, ...}
         self.cayley_table = self._sort_cayley_table_by_index(cayley_table)
-        self.g = cayley_table[0]
         self.order = len(cayley_table[0])
+        self.g = cayley_table[0]
+        self.i = self._get_index()
         self.mult = self._create_gi_multiply_gj(cayley_table)
         self._check_validation_of_cayley_table()
 
@@ -32,11 +33,11 @@ class Group:
     def are_rearranged_from_the_group_elements(self, a_list):
         return sorted(a_list) == sorted(self.g)
     
-    def get_index_of_gi(self, gi):
+    def _get_index(self):
+        output = dict()
         for i in range(self.order):
-            if self.g[i] == gi:
-                return i
-        raise ValueError(f'Cannot find index for {gi}')
+            output[self.g[i]] = i
+        return output
 
     def _create_gi_multiply_gj(self, cayley_table):
         mult = dict()
@@ -47,8 +48,8 @@ class Group:
                 gj = cayley_table[0][j]
                 gigj = f'{gi}*{gj}'
                 mult[gigj] = cayley_table[i][j]
-                idx = self.get_index_of_gi(gi)
-                mult[f'{idx}*{j}'] = str(self.get_index_of_gi(mult[gigj]))
+                idx = self.i[gi]
+                mult[f'{idx}*{j}'] = str(self.i[mult[gigj]])
         return mult
 
     def _check_validation_of_cayley_table(self):
@@ -72,13 +73,9 @@ class Group:
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
 
-    def find_inverse(self, element):
+    def get_inverse(self, element):
         # 查找并返回给定元素的逆元
         pass
-
-    def multiply(self, a, b):
-        # 返回元素a和b的乘积
-        return self.table[a][b]
     
     def is_abelian(self):
         # 检查群是否为阿贝尔群的实现代码

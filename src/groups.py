@@ -18,6 +18,7 @@ class Group:
             result += row_str + "\n"
         return result
 
+    # ==================== Construction of a Group ====================
     def _sort_cayley_table_by_index(self, cayley_table):
         sorted_caley_table = list()
         for g in cayley_table[0]:
@@ -82,9 +83,10 @@ class Group:
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
     
-    def is_abelian(self, group_list):
-        size = len(group_list)
-        g = group_list
+    # ==================== Properties of a Group ====================
+    def is_abelian(self, elements):
+        size = len(elements)
+        g = elements
         for i in range(size):
             for j in range(size):
                 gigj = self.mult[f'{g[i]}*{g[j]}']

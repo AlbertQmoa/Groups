@@ -21,9 +21,18 @@ class TestGroup:
             ['a', 'b', 'c', 'e'],
             ['c', 'e', 'a', 'b']    
         ]
+        cayley_table_D3 = [
+            ['e', 'r', 't', 'a', 'b', 'c'],
+            ['r', 't', 'e', 'b', 'c', 'a'],
+            ['t', 'e', 'r', 'c', 'a', 'b'],
+            ['a', 'c', 'b', 'e', 't', 'r'],
+            ['b', 'a', 'c', 'r', 'e', 't'],
+            ['c', 'b', 'a', 't', 'r', 'e']
+        ]
         groups = {
             'C3': Group(cayley_table_C3),
-            'C4': Group(cayley_table_C4)
+            'C4': Group(cayley_table_C4),
+            'D3': Group(cayley_table_D3),
         }
         return groups
 
@@ -52,6 +61,8 @@ class TestGroup:
     def test_is_abelian(self, get_groups):
         C4 = get_groups['C4']
         assert C4.is_abelian(C4.g) is True
+        D3 = get_groups['D3']
+        assert D3.is_abelian(D3.g) is not True
 
     def test_create_gi_multiply_gj(self, get_groups):
         C4 = get_groups['C4']

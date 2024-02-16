@@ -34,13 +34,20 @@ class TestGroup:
 
     def test_are_rearranged_from_the_group_elements(self, get_groups):
         C4 = get_groups['C4']
-        assert C4.are_rearranged_from_the_group_elements(['a', 'b', 'c', 'e'])
-        assert not C4.are_rearranged_from_the_group_elements(['a', 'a', 'c', 'e'])
+        assert C4._are_rearranged_from_the_group_elements(['a', 'b', 'c', 'e'])
+        assert not C4._are_rearranged_from_the_group_elements(['a', 'a', 'c', 'e'])
     
     def test_get_index(self, get_groups):
         for _, G in get_groups.items():
             for i in range(G.order):
                 assert G.i[G.g[i]] == i
+
+    def test_get_inverse(self, get_groups):
+        for _, G in get_groups.items():
+            for i in range(G.order):
+                gi = G.g[i]
+                gi_inv = G.inv[G.g[i]]
+                assert G.mult[f'{gi}*{gi_inv}'] == G.g[0]
 
     def test_create_gi_multiply_gj(self, get_groups):
         C4 = get_groups['C4']

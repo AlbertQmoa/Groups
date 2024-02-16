@@ -7,6 +7,7 @@ class Group:
         self.order = len(cayley_table[0])
         self.g = cayley_table[0]
         self.i = self._get_index()
+        self.inv = self._get_inverse()
         self.mult = self._create_gi_multiply_gj(cayley_table)
         self._check_validation_of_cayley_table()
 
@@ -30,13 +31,21 @@ class Group:
                 raise ValueError(f'Cannot find {g} in the index of cayley_table.')
         return sorted_caley_table
 
-    def are_rearranged_from_the_group_elements(self, a_list):
+    def _are_rearranged_from_the_group_elements(self, a_list):
         return sorted(a_list) == sorted(self.g)
     
     def _get_index(self):
         output = dict()
         for i in range(self.order):
             output[self.g[i]] = i
+        return output
+
+    def _get_inverse(self):
+        output = dict()
+        for j in range(self.order):
+            for i in range(self.order):
+                if self.cayley_table[i][j] == self.g[0]:
+                    output[self.g[j]] = self.cayley_table[i][0]
         return output
 
     def _create_gi_multiply_gj(self, cayley_table):
@@ -58,11 +67,11 @@ class Group:
             raise ValueError('cayley_table is not n * n')
         # --- Check rearrangement ---
         for row in self.cayley_table:
-            if not self.are_rearranged_from_the_group_elements(row):
+            if not self._are_rearranged_from_the_group_elements(row):
                 raise ValueError(f'j direction: {row} is not rearranged from G')
         for j in range(self.order):
             row = [self.cayley_table[i][j] for i in range(self.order)]
-            if not self.are_rearranged_from_the_group_elements(row):
+            if not self._are_rearranged_from_the_group_elements(row):
                 raise ValueError(f'i direction: {row} is not rearranged from G')
         # --- Check associative law ---
         for i in range(self.order):
@@ -72,10 +81,6 @@ class Group:
                     jk = self.mult[f'{j}*{k}']
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
-
-    def get_inverse(self, element):
-        # 查找并返回给定元素的逆元
-        pass
     
     def is_abelian(self):
         # 检查群是否为阿贝尔群的实现代码

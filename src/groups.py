@@ -82,9 +82,15 @@ class Group:
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
     
-    def is_abelian(self):
-        # 检查群是否为阿贝尔群的实现代码
-        pass
+    def is_abelian(self, group_list):
+        size = len(group_list)
+        g = group_list
+        for i in range(size):
+            for j in range(size):
+                gigj = self.mult[f'{g[i]}*{g[j]}']
+                gjgi = self.mult[f'{g[j]}*{g[i]}']
+                if gigj != gjgi: return False
+        return True
 
 
 if __name__ == '__main__':

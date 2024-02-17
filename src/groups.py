@@ -12,9 +12,10 @@ class Group:
         self._check_validation_of_cayley_table()
 
     def __str__(self):
-        result = "   " + "  ".join(self.g) + "\n"
+        result = "    " + "  ".join(self.g) + "\n"
+        result += '-' * (self.order * 3 + 2) + "\n"
         for row in self.cayley_table:
-            row_str = row[0] + "  " + "  ".join(str(elem) for elem in row)
+            row_str = row[0] + " | " + "  ".join(str(elem) for elem in row)
             result += row_str + "\n"
         return result
 
@@ -32,8 +33,8 @@ class Group:
                 raise ValueError(f'Cannot find {g} in the index of cayley_table.')
         return sorted_caley_table
 
-    def _are_rearranged_from_the_group_elements(self, a_list):
-        return sorted(a_list) == sorted(self.g)
+    def _are_rearranged_from_the_group(self, elements):
+        return sorted(elements) == sorted(self.g)
     
     def _get_index(self):
         output = dict()
@@ -68,11 +69,11 @@ class Group:
             raise ValueError('cayley_table is not n * n')
         # --- Check rearrangement ---
         for row in self.cayley_table:
-            if not self._are_rearranged_from_the_group_elements(row):
+            if not self._are_rearranged_from_the_group(row):
                 raise ValueError(f'j direction: {row} is not rearranged from G')
         for j in range(self.order):
             row = [self.cayley_table[i][j] for i in range(self.order)]
-            if not self._are_rearranged_from_the_group_elements(row):
+            if not self._are_rearranged_from_the_group(row):
                 raise ValueError(f'i direction: {row} is not rearranged from G')
         # --- Check associative law ---
         for i in range(self.order):
@@ -83,7 +84,7 @@ class Group:
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
     
-    # ==================== Properties of a Group ====================
+    # ==================== Properties of Subgroup ====================
     def is_abelian(self, elements):
         size = len(elements)
         g = elements
@@ -93,6 +94,37 @@ class Group:
                 gjgi = self.mult[f'{g[j]}*{g[i]}']
                 if gigj != gjgi: return False
         return True
+
+    def get_sub_cayley_table(self, elements):
+        if self.g[0] != elements[0]: raise ValueError('The elements[0] should be the identity')
+        idx_list = [self.i[g] for g in elements]
+        output = list()
+        for i in idx_list:
+            output.append([self.cayley_table[i][j] for j in idx_list])
+        return output
+
+    def print_cayley_table(self, elements):
+        table = self.get_sub_cayley_table(elements)
+        for row in table: print(row)
+
+    def _are_two_lists_rearranged(self, list1, list2):
+        return sorted(list1) == sorted(list2)
+
+    def is_subgroup(self, elements):
+        table = self.get_sub_cayley_table(elements)
+        for row in table: 
+            if not self._are_two_lists_rearranged(row, elements): return False
+        size = len(elements)
+        for j in range(size):
+            row = [table[i][j] for i in range(size)]
+            if not self._are_two_lists_rearranged(row, elements): return False
+        return True
+
+    # ==================== Generator ====================
+
+    # ==================== Left Coset and Right Coset ====================
+
+    # ==================== Conjugate and Quotient Group ====================
 
 
 if __name__ == '__main__':
@@ -105,3 +137,4 @@ if __name__ == '__main__':
     C4 = Group(cayley)
     print(C4)
     print(C4.mult)
+    C4.print_cayley_table(['e', 'a', 'c'])

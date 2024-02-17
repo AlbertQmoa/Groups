@@ -1,3 +1,4 @@
+import calc
 
 
 class Group:
@@ -103,7 +104,7 @@ class Group:
             output.append([self.cayley_table[i][j] for j in idx_list])
         return output
 
-    def print_cayley_table(self, elements):
+    def print_sub_cayley_table(self, elements):
         table = self.get_sub_cayley_table(elements)
         for row in table: print(row)
 
@@ -112,13 +113,22 @@ class Group:
 
     def is_subgroup(self, elements):
         table = self.get_sub_cayley_table(elements)
-        for row in table: 
+        for row in table:
             if not self._are_two_lists_rearranged(row, elements): return False
         size = len(elements)
         for j in range(size):
             row = [table[i][j] for i in range(size)]
             if not self._are_two_lists_rearranged(row, elements): return False
         return True
+
+    def find_subgroups(self):
+        factors = calc.find_factors(self.order)
+        elemets_without_g0 = self.g[1:]
+        size_list = [n - 1 for n in factors]
+        temp_list = calc.find_subsets(elemets_without_g0, size_list)
+        subsets = [[self.g[0]] + tmp for tmp in temp_list]
+        output = [elements for elements in subsets if self.is_subgroup(elements)]
+        return output
 
     # ==================== Generator ====================
 
@@ -137,4 +147,5 @@ if __name__ == '__main__':
     C4 = Group(cayley)
     print(C4)
     print(C4.mult)
-    C4.print_cayley_table(['e', 'a', 'c'])
+    C4.print_sub_cayley_table(['e', 'a', 'c'])
+    print(C4.find_subgroups())

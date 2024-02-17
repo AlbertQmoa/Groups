@@ -95,3 +95,15 @@ class TestGroup:
         assert D3.is_subgroup(['e', 'a']) is True
         assert D3.is_subgroup(['e', 'a', 'b', 'c']) is not True
 
+    def test_find_subgroups(self, get_groups):
+        C4 = get_groups['C4']
+        assert C4.find_subgroups() == [['e'], ['e', 'b'], ['e', 'a', 'b', 'c']]
+        D3 = get_groups['D3']
+        output = D3.find_subgroups()
+        result = [
+            ['e'], 
+            ['e', 'a'], ['e', 'b'], ['e', 'c'], 
+            ['e', 'r', 't'], 
+            ['e', 'r', 't', 'a', 'b', 'c']
+        ]
+        assert  output == result

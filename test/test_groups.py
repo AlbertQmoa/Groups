@@ -77,6 +77,12 @@ class TestGroup:
         D3 = get_groups['D3']
         assert D3.is_abelian(D3.g) is not True
     
+    def test_is_closed(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.is_closed(['e']) is True
+        assert D3.is_closed(['e', 'r', 't']) is True
+        assert D3.is_closed(['e', 'a', 'b']) is not True
+
     def test_get_sub_cayley_table(self, get_groups):
         D3 = get_groups['D3']
         output = D3.get_sub_cayley_table(['e', 'r', 't', 'a', 'b', 'c'])
@@ -108,29 +114,31 @@ class TestGroup:
         ]
         assert  output == result
 
-    # ==================== Generator ====================
-    def test_find_elements_generated_from_gi(self, get_groups):
+    def test_find_subgroup_generated_by_gi(self, get_groups):
         D3 = get_groups['D3']
-        output = set(D3.find_elements_generated_from_gi('e'))
+        output = set(D3.find_subgroup_generated_by_gi('e'))
         result = {'e'}
         assert output == result
-        output = set(D3.find_elements_generated_from_gi('a'))
+        output = set(D3.find_subgroup_generated_by_gi('a'))
         result = {'e', 'a'}
         assert output == result
-        output = set(D3.find_elements_generated_from_gi('r'))
+        output = set(D3.find_subgroup_generated_by_gi('r'))
         result = {'e', 'r', 't'}
         assert output == result
-        output = set(D3.find_elements_generated_from_gi('t'))
+        output = set(D3.find_subgroup_generated_by_gi('t'))
         result = {'e', 'r', 't'}
         assert output == result
 
         C4 = get_groups['C4']
-        output = set(C4.find_elements_generated_from_gi('a'))
+        output = set(C4.find_subgroup_generated_by_gi('a'))
         result = set(C4.g)
         assert output == result
-        output = set(C4.find_elements_generated_from_gi('b'))
+        output = set(C4.find_subgroup_generated_by_gi('b'))
         result = {'e', 'b'}
         assert output == result
-        output = set(C4.find_elements_generated_from_gi('c'))
+        output = set(C4.find_subgroup_generated_by_gi('c'))
         result = {'e', 'c', 'b', 'a'}
         assert output == result
+
+    # ==================== Generator ====================
+    

@@ -96,8 +96,16 @@ class Group:
                 if gigj != gjgi: return False
         return True
 
+    def is_closed(self, elements):
+        sub_table = self.get_sub_cayley_table(elements)
+        for row in sub_table:
+            if set(row) != set(elements):
+                return False
+        return True
+
     def get_sub_cayley_table(self, elements):
-        if self.g[0] != elements[0]: raise ValueError('The elements[0] should be the identity')
+        if self.g[0] != elements[0]:
+            raise ValueError('The elements[0] should be the identity')
         idx_list = [self.i[g] for g in elements]
         output = list()
         for i in idx_list:
@@ -130,10 +138,8 @@ class Group:
         output = [elements for elements in subsets if self.is_subgroup(elements)]
         return output
 
-    # ==================== Generator ====================
-    def find_elements_generated_from_gi(self, gi):
+    def find_subgroup_generated_by_gi(self, gi):
         if gi not in self.g: raise ValueError(f'{gi} is not in the group G')
-
         output = {self.g[0], gi}
         gi_n = gi
         while gi_n != self.g[0]:
@@ -141,12 +147,20 @@ class Group:
             output.add(gi_n)
         return list(output)
 
+    # ==================== Generator ====================
+    def find_subset_generated_by_gi_list(self, elements):
+        output = elements
+        sub_table = self.get_sub_cayley_table(output)
+        pass
+
     def find_generators_by_brute_force(self):
-        G_set, A_set = set(self.g), {self.g[0]}
+        G_set, A_set, output = set(self.g), {self.g[0]}, [self.g[0]]
         S_set = G_set - A_set
 
         while len(S_set) > 0:
             s0 = S_set.pop()
+            output.apped(s0)
+            
 
     # ==================== Left Coset and Right Coset ====================
 

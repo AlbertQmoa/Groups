@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from groups import Group
+import calc
 import pytest
 
 
@@ -157,4 +158,20 @@ class TestGroup:
         output = set(D3.find_subset_generated_by_gi_list(['b', 'c']))
         result =  {'e', 'r', 't', 'a', 'b', 'c'}
         assert output == result
-       
+
+    def test_find_mimal_generating_set(self, get_groups):
+        C4 = get_groups['C4']
+        output = C4.find_mimal_generating_set()
+        results = [['e', 'a'], ['e', 'b'], ['e', 'c']]
+        assert output in results
+
+        D3 = get_groups['D3']
+        output = set(D3.find_mimal_generating_set())
+        results = [
+            {'e', 'r', 't'}, {'e', 'r', 'a'}, {'e', 'r', 'b'}, {'e', 'r', 'c'}, 
+            {'e', 't', 'a'}, {'e', 't', 'b'}, {'e', 't', 'c'},
+            {'e', 'a', 'b'}, {'e', 'a', 'c'},
+            {'e', 'b', 'c'},
+        ]
+        assert output in results
+

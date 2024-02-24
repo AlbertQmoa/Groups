@@ -1,3 +1,5 @@
+import sys
+import random
 import calc
 
 
@@ -166,14 +168,31 @@ class Group:
             output = list(set_)
         return output
 
-    def find_generators_by_brute_force(self):
+    def find_a_generating_set(self):
         G_set, A_set, output = set(self.g), {self.g[0]}, [self.g[0]]
         S_set = G_set - A_set
-
         while len(S_set) > 0:
-            s0 = S_set.pop()
-            output.apped(s0)
-            
+            list_ = list(S_set)
+            s0 = list_.pop(random.randint(0, len(list_)-1))
+            output.append(s0)
+            A_set = set(self.find_subset_generated_by_gi_list(output))
+            S_set = G_set - A_set
+        output = self.move_identity_to_index_0(output)
+        return output
+
+    def find_mimal_generating_set(self):
+        num_iter = 10000
+        size_min = sys.maxsize
+        count = 0
+        while count < num_iter:
+            temp = self.find_a_generating_set()
+            size = len(temp)
+            if size < size_min:
+                output = temp
+                size_min = size
+            count += 1
+        return output
+
 
     # ==================== Left Coset and Right Coset ====================
 

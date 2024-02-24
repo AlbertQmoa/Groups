@@ -1,3 +1,4 @@
+import itertools
 from itertools import combinations
 
 
@@ -16,3 +17,7 @@ def find_subsets(elements, subset_sizes):
         for combo in combinations(elements, size):
             subsets.append(list(combo))
     return subsets
+
+
+def find_permutations(elements):
+    return [list(set_) for set_ in itertools.permutations(elements)]

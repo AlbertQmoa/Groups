@@ -103,6 +103,14 @@ class Group:
                 return False
         return True
 
+    def move_identity_to_index_0(self, elements):
+        output = elements[:]
+        if self.g[0] not in output: raise ValueError('There is no identity in the elements')
+        if output[0] == self.g[0]: return output
+        output.remove(self.g[0])
+        output.insert(0, self.g[0])
+        return output
+
     def get_sub_cayley_table(self, elements):
         if self.g[0] != elements[0]:
             raise ValueError('The elements[0] should be the identity')
@@ -149,9 +157,15 @@ class Group:
 
     # ==================== Generator ====================
     def find_subset_generated_by_gi_list(self, elements):
-        output = elements
-        sub_table = self.get_sub_cayley_table(output)
-        pass
+        set_ = set(elements)
+        if self.g[0] not in elements: set_.add(self.g[0])
+        output = list(set_)
+        while not self.is_closed(output):
+            sub_table = self.get_sub_cayley_table(output)
+            for row in sub_table:
+                set_.update(row)
+            output = list(set_)
+        return output
 
     def find_generators_by_brute_force(self):
         G_set, A_set, output = set(self.g), {self.g[0]}, [self.g[0]]

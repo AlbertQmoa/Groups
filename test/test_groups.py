@@ -83,6 +83,11 @@ class TestGroup:
         assert D3.is_closed(['e', 'r', 't']) is True
         assert D3.is_closed(['e', 'a', 'b']) is not True
 
+    def test_move_identity_to_index_0(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.move_identity_to_index_0(['e', 'a', 'r']) == ['e', 'a', 'r']
+        assert D3.move_identity_to_index_0(['a', 'r', 'e']) == ['e', 'a', 'r']
+
     def test_get_sub_cayley_table(self, get_groups):
         D3 = get_groups['D3']
         output = D3.get_sub_cayley_table(['e', 'r', 't', 'a', 'b', 'c'])
@@ -141,4 +146,11 @@ class TestGroup:
         assert output == result
 
     # ==================== Generator ====================
-    
+    # def test_find_subset_generated_by_gi_list(self, get_groups):
+    #     D3 = get_groups['D3']
+    #     output = set(D3.find_subset_generated_by_gi_list(['e']))
+    #     result = {'e'}
+    #     assert output == result
+    #     output = set(D3.find_subset_generated_by_gi_list(['r', 't']))
+    #     result = {'e', 'r', 't'}
+    #     assert output == result

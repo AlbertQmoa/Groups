@@ -146,11 +146,15 @@ class TestGroup:
         assert output == result
 
     # ==================== Generator ====================
-    # def test_find_subset_generated_by_gi_list(self, get_groups):
-    #     D3 = get_groups['D3']
-    #     output = set(D3.find_subset_generated_by_gi_list(['e']))
-    #     result = {'e'}
-    #     assert output == result
-    #     output = set(D3.find_subset_generated_by_gi_list(['r', 't']))
-    #     result = {'e', 'r', 't'}
-    #     assert output == result
+    def test_find_subset_generated_by_gi_list(self, get_groups):
+        D3 = get_groups['D3']
+        output = set(D3.find_subset_generated_by_gi_list(['e']))
+        result = {'e'}
+        assert output == result
+        output = set(D3.find_subset_generated_by_gi_list(['r', 't']))
+        result = {'e', 'r', 't'}
+        assert output == result
+        output = set(D3.find_subset_generated_by_gi_list(['b', 'c']))
+        result =  {'e', 'r', 't', 'a', 'b', 'c'}
+        assert output == result
+       

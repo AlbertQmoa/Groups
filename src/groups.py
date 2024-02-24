@@ -112,9 +112,8 @@ class Group:
         return output
 
     def get_sub_cayley_table(self, elements):
-        if self.g[0] != elements[0]:
-            raise ValueError('The elements[0] should be the identity')
-        idx_list = [self.i[g] for g in elements]
+        list_ = self.move_identity_to_index_0(elements)
+        idx_list = [self.i[g] for g in list_]
         output = list()
         for i in idx_list:
             output.append([self.cayley_table[i][j] for j in idx_list])

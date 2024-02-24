@@ -107,3 +107,30 @@ class TestGroup:
             ['e', 'r', 't', 'a', 'b', 'c']
         ]
         assert  output == result
+
+    # ==================== Generator ====================
+    def test_find_elements_generated_from_gi(self, get_groups):
+        D3 = get_groups['D3']
+        output = set(D3.find_elements_generated_from_gi('e'))
+        result = {'e'}
+        assert output == result
+        output = set(D3.find_elements_generated_from_gi('a'))
+        result = {'e', 'a'}
+        assert output == result
+        output = set(D3.find_elements_generated_from_gi('r'))
+        result = {'e', 'r', 't'}
+        assert output == result
+        output = set(D3.find_elements_generated_from_gi('t'))
+        result = {'e', 'r', 't'}
+        assert output == result
+
+        C4 = get_groups['C4']
+        output = set(C4.find_elements_generated_from_gi('a'))
+        result = set(C4.g)
+        assert output == result
+        output = set(C4.find_elements_generated_from_gi('b'))
+        result = {'e', 'b'}
+        assert output == result
+        output = set(C4.find_elements_generated_from_gi('c'))
+        result = {'e', 'c', 'b', 'a'}
+        assert output == result

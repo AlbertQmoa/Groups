@@ -131,6 +131,22 @@ class Group:
         return output
 
     # ==================== Generator ====================
+    def find_elements_generated_from_gi(self, gi):
+        if gi not in self.g: raise ValueError(f'{gi} is not in the group G')
+
+        output = {self.g[0], gi}
+        gi_n = gi
+        while gi_n != self.g[0]:
+            gi_n = self.mult[f'{gi_n}*{gi}']
+            output.add(gi_n)
+        return list(output)
+
+    def find_generators_by_brute_force(self):
+        G_set, A_set = set(self.g), {self.g[0]}
+        S_set = G_set - A_set
+
+        while len(S_set) > 0:
+            s0 = S_set.pop()
 
     # ==================== Left Coset and Right Coset ====================
 

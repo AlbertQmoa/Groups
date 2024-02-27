@@ -129,6 +129,7 @@ class Group:
         return sorted(list1) == sorted(list2)
 
     def is_subgroup(self, elements):
+        if len(elements) < 1 or elements is None: return False
         table = self.get_sub_cayley_table(elements)
         for row in table:
             if not self._are_two_lists_rearranged(row, elements): return False
@@ -193,10 +194,42 @@ class Group:
             count += 1
         return output
 
-
     # ==================== Left Coset and Right Coset ====================
+    def get_giH(self, gi, H):
+        if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
+        return [self.mult[f'{gi}*{hj}'] for hj in H]
 
-    # ==================== Conjugate and Quotient Group ====================
+    def get_Hgi(self, H, gi):
+        if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
+        return [self.mult[f'{hj}*{gi}'] for hj in H]
+
+    def get_gH(self, H):
+        if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
+        output = dict()
+        giH_list = list()
+        for gi in self.g:
+            giH = set(self.get_giH(gi, H))
+            if giH not in giH_list:
+                giH_list.append(giH) 
+                output[gi] = list(giH)
+        assert self.order % len(giH_list) == 0
+        return output
+
+    def get_Hg(self, H):
+        if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
+        output = dict()
+        Hgi_list = list()
+        for gi in self.g:
+            Hgi = set(self.get_Hgi(H, gi))
+            if Hgi not in Hgi_list:
+                Hgi_list.append(Hgi) 
+                output[gi] = list(Hgi)
+        assert self.order % len(Hgi_list) == 0
+        return output
+
+    # ========================== Conjugate and Class =====================
+
+    # ========================== Quotient Group ==========================
 
 
 if __name__ == '__main__':

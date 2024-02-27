@@ -175,3 +175,75 @@ class TestGroup:
         ]
         assert output in results
 
+    # ==================== Left Coset and Right Coset ====================
+    def test_get_giH(self, get_groups):
+        D3 = get_groups['D3']
+        H = ['e', 'r', 't']
+        assert D3.get_giH('e', H) == H
+        output = set(D3.get_giH('r', H))
+        result = {'r', 't', 'e'}
+        assert output == result
+
+        H = ['e', 'b']
+        output = set(D3.get_giH('r', H))
+        result = {'r', 'c'}
+        assert output == result
+
+    def test_get_Hgi(self, get_groups):
+        D3 = get_groups['D3']
+        H = ['e', 'r', 't']
+        assert D3.get_Hgi(H, 'e') == H
+        output = set(D3.get_Hgi(H, 'r'))
+        result = {'r', 't', 'e'}
+        assert output == result
+
+        H = ['e', 'b']
+        output = set(D3.get_Hgi(H, 'r'))
+        result = {'r', 'a'}
+        assert output == result
+    
+    def test_get_gH(self, get_groups):
+        D3 = get_groups['D3']
+        H = ['e', 'r', 't']
+        output = D3.get_gH(H)
+        result = {
+            'e': H,
+            'a': ['a', 'c', 'b']
+        }
+        for key, val in output.items():
+            assert key in result
+            assert set(val) == set(result[key])
+        
+        H = ['e', 'a']
+        output = D3.get_gH(H)
+        result = {
+            'e': ['e', 'a'],
+            'r': ['r', 'b'],
+            't': ['t', 'c']
+        }
+        for key, val in output.items():
+            assert key in result
+            assert set(val) == set(result[key])
+
+    def test_get_Hg(self, get_groups):
+        D3 = get_groups['D3']
+        H = ['e', 'r', 't']
+        output = D3.get_Hg(H)
+        result = {
+            'e': H,
+            'a': ['a', 'c', 'b']
+        }
+        for key, val in output.items():
+            assert key in result
+            assert set(val) == set(result[key])
+        
+        H = ['e', 'a']
+        output = D3.get_Hg(H)
+        result = {
+            'e': ['e', 'a'],
+            'r': ['r', 'c'],
+            't': ['t', 'b']
+        }
+        for key, val in output.items():
+            assert key in result
+            assert set(val) == set(result[key])

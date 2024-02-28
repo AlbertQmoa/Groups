@@ -186,36 +186,36 @@ class TestGroup:
         assert output in results
 
     # ==================== Left Coset and Right Coset ====================
-    def test_fing_giH(self, get_groups):
+    def test_find_giH(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        assert D3.fing_giH('e', H) == H
-        output = set(D3.fing_giH('r', H))
+        assert D3.find_giH('e', H) == H
+        output = set(D3.find_giH('r', H))
         result = {'r', 't', 'e'}
         assert output == result
 
         H = ['e', 'b']
-        output = set(D3.fing_giH('r', H))
+        output = set(D3.find_giH('r', H))
         result = {'r', 'c'}
         assert output == result
 
-    def test_fing_Hgi(self, get_groups):
+    def test_find_Hgi(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        assert D3.fing_Hgi(H, 'e') == H
-        output = set(D3.fing_Hgi(H, 'r'))
+        assert D3.find_Hgi(H, 'e') == H
+        output = set(D3.find_Hgi(H, 'r'))
         result = {'r', 't', 'e'}
         assert output == result
 
         H = ['e', 'b']
-        output = set(D3.fing_Hgi(H, 'r'))
+        output = set(D3.find_Hgi(H, 'r'))
         result = {'r', 'a'}
         assert output == result
     
-    def test_fing_gH(self, get_groups):
+    def test_find_gH(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        output = D3.fing_gH(H)
+        output = D3.find_gH(H)
         result = {
             'e': H,
             'a': ['a', 'c', 'b']
@@ -225,7 +225,7 @@ class TestGroup:
             assert set(val) == set(result[key])
         
         H = ['e', 'a']
-        output = D3.fing_gH(H)
+        output = D3.find_gH(H)
         result = {
             'e': ['e', 'a'],
             'r': ['r', 'b'],
@@ -235,10 +235,10 @@ class TestGroup:
             assert key in result
             assert set(val) == set(result[key])
 
-    def test_fing_Hg(self, get_groups):
+    def test_find_Hg(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        output = D3.fing_Hg(H)
+        output = D3.find_Hg(H)
         result = {
             'e': H,
             'a': ['a', 'c', 'b']
@@ -248,7 +248,7 @@ class TestGroup:
             assert set(val) == set(result[key])
         
         H = ['e', 'a']
-        output = D3.fing_Hg(H)
+        output = D3.find_Hg(H)
         result = {
             'e': ['e', 'a'],
             'r': ['r', 'c'],
@@ -288,7 +288,7 @@ class TestGroup:
                 output = set(G.find_all_elemets_conjugate_to_x(x))
                 result = set()
                 a_list = G.find_subgroup_being_abelian_to_gi(x)
-                gA_dict = G.fing_gH(a_list)
+                gA_dict = G.find_gH(a_list)
                 for gi in gA_dict:
                     gxginv = G.mult[f'{x}*{G.inv[gi]}']
                     gxginv = G.mult[f'{gi}*{gxginv}']
@@ -328,3 +328,50 @@ class TestGroup:
         result = [set(H) for H in H_list]
         assert len(output) == len(result)
         for N in output: assert N in result
+
+    # ========================== Quotient Group ==========================
+    def test_find_cayley_table_of_quotient_group_given_normal_subgroups(self, get_groups):
+        D3 = get_groups['D3']
+        output = D3.find_cayley_table_of_quotient_group_given_normal_subgroups(D3.g)
+        assert output == [['q0']]
+        output = D3.find_cayley_table_of_quotient_group_given_normal_subgroups(['e', 'r', 't'])
+        assert output == [['q0', 'q1'], ['q1', 'q0']]
+        output = D3.find_cayley_table_of_quotient_group_given_normal_subgroups(['e'])
+        assert output == [
+            ['q0', 'q1', 'q2', 'q3', 'q4', 'q5'],
+            ['q1', 'q2', 'q0', 'q4', 'q5', 'q3'],
+            ['q2', 'q0', 'q1', 'q5', 'q3', 'q4'],
+            ['q3', 'q5', 'q4', 'q0', 'q2', 'q1'],
+            ['q4', 'q3', 'q5', 'q1', 'q0', 'q2'],
+            ['q5', 'q4', 'q3', 'q2', 'q1', 'q0']
+        ]
+    
+    def test_findfind_quotient_group_given_normal_sugroup(self, get_groups):
+        D3 = get_groups['D3']
+        output = D3.find_quotient_group_given_normal_sugroup(D3.g)
+        assert output.cayley_table == [['q0']]
+        output = D3.find_quotient_group_given_normal_sugroup(['e', 'r', 't'])
+        assert output.cayley_table == [['q0', 'q1'], ['q1', 'q0']]
+        output = D3.find_quotient_group_given_normal_sugroup(['e'])
+        assert output.cayley_table == [
+            ['q0', 'q1', 'q2', 'q3', 'q4', 'q5'],
+            ['q1', 'q2', 'q0', 'q4', 'q5', 'q3'],
+            ['q2', 'q0', 'q1', 'q5', 'q3', 'q4'],
+            ['q3', 'q5', 'q4', 'q0', 'q2', 'q1'],
+            ['q4', 'q3', 'q5', 'q1', 'q0', 'q2'],
+            ['q5', 'q4', 'q3', 'q2', 'q1', 'q0']
+        ]
+
+    def test_find_quotient_groups(self, get_groups):
+        D3 = get_groups['D3']
+        output = D3.find_quotient_groups()
+        assert output[2].cayley_table == [['q0']]
+        assert output[1].cayley_table == [['q0', 'q1'], ['q1', 'q0']]
+        assert output[0].cayley_table == [
+            ['q0', 'q1', 'q2', 'q3', 'q4', 'q5'],
+            ['q1', 'q2', 'q0', 'q4', 'q5', 'q3'],
+            ['q2', 'q0', 'q1', 'q5', 'q3', 'q4'],
+            ['q3', 'q5', 'q4', 'q0', 'q2', 'q1'],
+            ['q4', 'q3', 'q5', 'q1', 'q0', 'q2'],
+            ['q5', 'q4', 'q3', 'q2', 'q1', 'q0']
+        ]

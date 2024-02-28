@@ -205,32 +205,32 @@ class Group:
         return output
 
     # ==================== Left Coset and Right Coset ====================
-    def fing_giH(self, gi, H):
+    def find_giH(self, gi, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         return [self.mult[f'{gi}*{hj}'] for hj in H]
 
-    def fing_Hgi(self, H, gi):
+    def find_Hgi(self, H, gi):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         return [self.mult[f'{hj}*{gi}'] for hj in H]
 
-    def fing_gH(self, H):
+    def find_gH(self, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         output = dict()
         giH_list = list()
         for gi in self.g:
-            giH = set(self.fing_giH(gi, H))
+            giH = set(self.find_giH(gi, H))
             if giH not in giH_list:
                 giH_list.append(giH) 
                 output[gi] = list(giH)
         assert self.order % len(giH_list) == 0
         return output
 
-    def fing_Hg(self, H):
+    def find_Hg(self, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         output = dict()
         Hgi_list = list()
         for gi in self.g:
-            Hgi = set(self.fing_Hgi(H, gi))
+            Hgi = set(self.find_Hgi(H, gi))
             if Hgi not in Hgi_list:
                 Hgi_list.append(Hgi) 
                 output[gi] = list(Hgi)
@@ -295,6 +295,50 @@ class Group:
         return output
 
     # ========================== Quotient Group ==========================
+    def find_cayley_table_of_quotient_group_given_normal_subgroups(self, elements):
+        if not self.is_normal_subgroup(elements): raise ValueError(f'{elements} is not a normal subgroup')
+        
+        # ------ cosets = {g0N, giN, gjN, gkN, ...}
+        cosets = self.find_gH(elements)
+
+        # ------ worker = [(g0, g0N), (gi, giN), (gj, gjN), (gk, gkN) ...] ------
+        worker = [(self.g[0], cosets[self.g[0]])]
+        for gi, giN in cosets.items():
+            if gi != self.g[0]:
+                worker.append((gi, giN))
+        
+        # ------ create cayley_table of the quotient_group: Qk = Qi * Qj ------
+        # [Q0, Q1, Q2, Q3, ...] and [g0N, giN, gjN, gkN, ...] are one to one
+        size = len(worker)
+        table = list()
+        for i in range(size):
+            row = list()
+            for j in range(size):
+                # to find k for Qk = Qi * Qj
+                gigj =  self.mult[f'{worker[i][0]}*{worker[j][0]}']
+                for k in range(size):
+                    if gigj in worker[k][1]:
+                        row.append(f'q{k}')
+                        break
+            table.append(row)
+        
+        # ------ do some basic check ------
+        for row in table: assert self._are_two_lists_rearranged(row, table[0])
+        return table
+
+    def find_quotient_group_given_normal_sugroup(self, elements):
+        table = self.find_cayley_table_of_quotient_group_given_normal_subgroups(elements)
+        Q = Group(table)
+        assert Q.is_subgroup(Q.g)
+        return Q
+
+    def find_quotient_groups(self):
+        normal_subgroups = self.find_normal_subgroups()
+        Q_list = list()
+        for elements in normal_subgroups:
+            Q = self.find_quotient_group_given_normal_sugroup(elements)
+            Q_list.append(Q)
+        return Q_list
 
 
 if __name__ == '__main__':

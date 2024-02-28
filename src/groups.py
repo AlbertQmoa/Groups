@@ -245,7 +245,12 @@ class Group:
             if self.mult[f'{x}*{gi}'] == self.mult[f'{gi}*{y}']:
                 return True
         return False
-    
+
+    def calc_g_x_ginv(self, x, g):
+        x_ginv = self.mult[f'{x}*{self.inv[g]}']
+        gxginv = self.mult[f'{g}*{x_ginv}']
+        return gxginv
+
     def are_all_elements_conjugated_to_each_other(self, elements):
         for gi in elements: self._check_if_x_in_the_group(gi)
         size = len(elements)
@@ -273,8 +278,21 @@ class Group:
             if Cx not in output: output.append(Cx)
         return [set(Cx) for Cx in output]
 
-
     # ========================== Normal Group ==========================
+    def is_normal_subgroup(self, elements):
+        if not self.is_subgroup(elements): raise ValueError(f'{elements} is not a subgroup')
+        for x in elements:
+            for g in self.g:
+                if self.calc_g_x_ginv(x, g) not in elements: return False
+        return True
+
+    def find_normal_subgroups(self):
+        subgroup_list = self.find_subgroups()
+        output = list()
+        for elements in subgroup_list:
+            if self.is_normal_subgroup(elements):
+                output.append(elements)
+        return output
 
     # ========================== Quotient Group ==========================
 

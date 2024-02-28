@@ -268,6 +268,12 @@ class TestGroup:
         assert D3.are_x_and_y_conjugated('c', 'a') is True
         assert D3.are_x_and_y_conjugated('a', 'r') is not True
 
+    def test_calc_g_x_ginv(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.calc_g_x_ginv('e', 'r') == 'e'
+        assert D3.calc_g_x_ginv('r', 't') == 'r'
+        assert D3.calc_g_x_ginv('r', 'a') == 't'
+
     def test_are_all_elements_conjugated_to_each_other(self, get_groups):
         D3 = get_groups['D3']
         assert D3.are_all_elements_conjugated_to_each_other([]) is not True
@@ -296,3 +302,29 @@ class TestGroup:
         assert {'e'} in Cx_list
         assert {'r', 't'} in Cx_list
         assert {'a', 'b', 'c'} in Cx_list
+
+    # ========================== Normal Group ==========================
+    def test_is_normal_subgroup(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.is_normal_subgroup(['e']) is True 
+        assert D3.is_normal_subgroup(['e', 'r', 't']) is True 
+        assert D3.is_normal_subgroup(['e', 'r', 't', 'a', 'b', 'c']) is True 
+        assert D3.is_normal_subgroup(['e', 'a']) is not True 
+        assert D3.is_normal_subgroup(['e', 'b']) is not True 
+        assert D3.is_normal_subgroup(['e', 'c']) is not True 
+
+    def test_find_normal_subgroups(self, get_groups):
+        D3 = get_groups['D3']
+        N_list = D3.find_normal_subgroups()
+        output = [set(N) for N in N_list]
+        result = [{'e'}, {'e', 'r', 't'}, {'e', 'r', 't', 'a', 'b', 'c'}]
+        assert len(output) == len(result)
+        for N in output: assert N in result
+
+        C4 = get_groups['C4']
+        H_list = C4.find_subgroups()
+        N_list = C4.find_normal_subgroups()
+        output = [set(N) for N in N_list]
+        result = [set(H) for H in H_list]
+        assert len(output) == len(result)
+        for N in output: assert N in result

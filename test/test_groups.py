@@ -146,6 +146,16 @@ class TestGroup:
         result = {'e', 'c', 'b', 'a'}
         assert output == result
 
+    def test_find_subgroup_being_abelian_to_gi(self, get_groups):
+        for _, G in get_groups.items():
+            g_set = set(G.g)
+            for gi in G.g:
+                a_set = set(G.find_subgroup_being_abelian_to_gi(gi))
+                b_set = g_set - a_set
+                assert G.is_subgroup(list(a_set)) is True
+                for a in a_set: assert G.is_abelian([a, gi]) is True
+                for b in b_set: assert G.is_abelian([b, gi]) is not True
+
     # ==================== Generator ====================
     def test_find_subset_generated_by_gi_list(self, get_groups):
         D3 = get_groups['D3']
@@ -176,36 +186,36 @@ class TestGroup:
         assert output in results
 
     # ==================== Left Coset and Right Coset ====================
-    def test_get_giH(self, get_groups):
+    def test_fing_giH(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        assert D3.get_giH('e', H) == H
-        output = set(D3.get_giH('r', H))
+        assert D3.fing_giH('e', H) == H
+        output = set(D3.fing_giH('r', H))
         result = {'r', 't', 'e'}
         assert output == result
 
         H = ['e', 'b']
-        output = set(D3.get_giH('r', H))
+        output = set(D3.fing_giH('r', H))
         result = {'r', 'c'}
         assert output == result
 
-    def test_get_Hgi(self, get_groups):
+    def test_fing_Hgi(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        assert D3.get_Hgi(H, 'e') == H
-        output = set(D3.get_Hgi(H, 'r'))
+        assert D3.fing_Hgi(H, 'e') == H
+        output = set(D3.fing_Hgi(H, 'r'))
         result = {'r', 't', 'e'}
         assert output == result
 
         H = ['e', 'b']
-        output = set(D3.get_Hgi(H, 'r'))
+        output = set(D3.fing_Hgi(H, 'r'))
         result = {'r', 'a'}
         assert output == result
     
-    def test_get_gH(self, get_groups):
+    def test_fing_gH(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        output = D3.get_gH(H)
+        output = D3.fing_gH(H)
         result = {
             'e': H,
             'a': ['a', 'c', 'b']
@@ -215,7 +225,7 @@ class TestGroup:
             assert set(val) == set(result[key])
         
         H = ['e', 'a']
-        output = D3.get_gH(H)
+        output = D3.fing_gH(H)
         result = {
             'e': ['e', 'a'],
             'r': ['r', 'b'],
@@ -225,10 +235,10 @@ class TestGroup:
             assert key in result
             assert set(val) == set(result[key])
 
-    def test_get_Hg(self, get_groups):
+    def test_fing_Hg(self, get_groups):
         D3 = get_groups['D3']
         H = ['e', 'r', 't']
-        output = D3.get_Hg(H)
+        output = D3.fing_Hg(H)
         result = {
             'e': H,
             'a': ['a', 'c', 'b']
@@ -238,7 +248,7 @@ class TestGroup:
             assert set(val) == set(result[key])
         
         H = ['e', 'a']
-        output = D3.get_Hg(H)
+        output = D3.fing_Hg(H)
         result = {
             'e': ['e', 'a'],
             'r': ['r', 'c'],
@@ -247,3 +257,42 @@ class TestGroup:
         for key, val in output.items():
             assert key in result
             assert set(val) == set(result[key])
+
+    # ========================== Conjugate and Class =====================
+    def test_are_x_and_y_conjugated(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.are_x_and_y_conjugated('e', 'e') is True
+        assert D3.are_x_and_y_conjugated('e', 'r') is not True
+        assert D3.are_x_and_y_conjugated('r', 't') is True
+        assert D3.are_x_and_y_conjugated('a', 'b') is True
+        assert D3.are_x_and_y_conjugated('c', 'a') is True
+        assert D3.are_x_and_y_conjugated('a', 'r') is not True
+
+    def test_are_all_elements_conjugated_to_each_other(self, get_groups):
+        D3 = get_groups['D3']
+        assert D3.are_all_elements_conjugated_to_each_other([]) is not True
+        assert D3.are_all_elements_conjugated_to_each_other(['r']) is True
+        assert D3.are_all_elements_conjugated_to_each_other(['r', 't']) is True
+        assert D3.are_all_elements_conjugated_to_each_other(['a', 'b']) is True
+        assert D3.are_all_elements_conjugated_to_each_other(['r', 'b']) is not True
+
+    def test_find_all_elemets_conjugate_to_x(self, get_groups):
+        for _, G in get_groups.items():
+            for x in G.g:
+                output = set(G.find_all_elemets_conjugate_to_x(x))
+                result = set()
+                a_list = G.find_subgroup_being_abelian_to_gi(x)
+                gA_dict = G.fing_gH(a_list)
+                for gi in gA_dict:
+                    gxginv = G.mult[f'{x}*{G.inv[gi]}']
+                    gxginv = G.mult[f'{gi}*{gxginv}']
+                    result.add(gxginv)
+                assert output == result
+                    
+    def test_find_all_conjugated_class(self, get_groups):
+        D3 = get_groups['D3']
+        Cx_list = [set(Cx) for Cx in D3.find_all_conjugated_class()]
+        assert len(Cx_list) == 3
+        assert {'e'} in Cx_list
+        assert {'r', 't'} in Cx_list
+        assert {'a', 'b', 'c'} in Cx_list

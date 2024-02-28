@@ -86,7 +86,10 @@ class Group:
                     jk = self.mult[f'{j}*{k}']
                     if self.mult[f'{ij}*{k}'] != self.mult[f'{i}*{jk}']:
                         raise ValueError(f'{self.g[i]}*{self.g[j]}*{self.g[k]} violates the assicuative law')
-    
+
+    def _check_if_x_in_the_group(self, x):
+        if x not in self.g: raise ValueError(f'{x} is not in the group {self.g}')
+
     # ==================== Properties of Subgroup ====================
     def is_abelian(self, elements):
         size = len(elements)
@@ -157,6 +160,13 @@ class Group:
             output.add(gi_n)
         return list(output)
 
+    def find_subgroup_being_abelian_to_gi(self, gi):
+        output = list()
+        for gj in self.g:
+            if self.is_abelian([gj, gi]):
+                output.append(gj)
+        return output
+
     # ==================== Generator ====================
     def find_subset_generated_by_gi_list(self, elements):
         set_ = set(elements)
@@ -195,32 +205,32 @@ class Group:
         return output
 
     # ==================== Left Coset and Right Coset ====================
-    def get_giH(self, gi, H):
+    def fing_giH(self, gi, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         return [self.mult[f'{gi}*{hj}'] for hj in H]
 
-    def get_Hgi(self, H, gi):
+    def fing_Hgi(self, H, gi):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         return [self.mult[f'{hj}*{gi}'] for hj in H]
 
-    def get_gH(self, H):
+    def fing_gH(self, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         output = dict()
         giH_list = list()
         for gi in self.g:
-            giH = set(self.get_giH(gi, H))
+            giH = set(self.fing_giH(gi, H))
             if giH not in giH_list:
                 giH_list.append(giH) 
                 output[gi] = list(giH)
         assert self.order % len(giH_list) == 0
         return output
 
-    def get_Hg(self, H):
+    def fing_Hg(self, H):
         if not self.is_subgroup(H): raise ValueError(f'H is not a subgroup')
         output = dict()
         Hgi_list = list()
         for gi in self.g:
-            Hgi = set(self.get_Hgi(H, gi))
+            Hgi = set(self.fing_Hgi(H, gi))
             if Hgi not in Hgi_list:
                 Hgi_list.append(Hgi) 
                 output[gi] = list(Hgi)
@@ -228,6 +238,43 @@ class Group:
         return output
 
     # ========================== Conjugate and Class =====================
+    def are_x_and_y_conjugated(self, x, y):
+        if x == y: return True
+        if x == self.g[0] or y == self.g[0]: return False
+        for gi in self.g:
+            if self.mult[f'{x}*{gi}'] == self.mult[f'{gi}*{y}']:
+                return True
+        return False
+    
+    def are_all_elements_conjugated_to_each_other(self, elements):
+        for gi in elements: self._check_if_x_in_the_group(gi)
+        size = len(elements)
+        if size == 0: return False
+        if size == 1: return True
+        for i in range(size):
+            for j in range(i+1, size):
+                if not self.are_x_and_y_conjugated(elements[i], elements[j]):
+                    return False
+        return True
+    
+    def find_all_elemets_conjugate_to_x(self, x):
+        self._check_if_x_in_the_group(x)
+        if x == self.g[0]: return [self.g[0]]
+        output = list()
+        for gi in self.g:
+            if self.are_x_and_y_conjugated(gi, x):
+                output.append(gi)
+        return output
+
+    def find_all_conjugated_class(self):
+        output = list()
+        for x in self.g:
+            Cx = set(self.find_all_elemets_conjugate_to_x(x))
+            if Cx not in output: output.append(Cx)
+        return [set(Cx) for Cx in output]
+
+
+    # ========================== Normal Group ==========================
 
     # ========================== Quotient Group ==========================
 
